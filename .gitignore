@@ -1,0 +1,25 @@
+# Directories to ignore
+admin/
+Blood on the Moddedtower/
+data/
+originalFiles/
+script/
+start_game/
+util/
+
+# Files to ignore
+Sybillian tips.txt
+test_input.json
+
+# Python virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
