@@ -4,6 +4,7 @@ def main():
     print("=== Blood on the Clocktower Custom Installer ===")
     print("-> Paste character JSONs to save them to the database.")
     print("-> Type 'insert' to generate commands for all saved characters.")
+    print("-> Type 'reset' to restore files to their original state.")
     print("-> Leave the input completely blank and press Enter to exit.\n")
     
     while True:
@@ -25,13 +26,19 @@ def main():
         if not user_input:
             print("\nExiting program. Goodbye!")
             break
+
+        # Scenario: Reset files to original state
+        if user_input.lower() == "reset":
+            app.reset_to_original()
+            print("\nReset process finished.")
+            continue
             
         # Scenario 2: Generate/Insert All Bulk Process
         if user_input.lower() == "insert":
             db_list = app.load_database()
             if db_list:
                 app.bulk_process_characters(db_list)
-                print("\n✓ All characters successfully installed into .mcfunction files!")
+                print("\nAll characters successfully installed into .mcfunction files!")
             else:
                 print("\nDatabase is empty! Paste some character JSONs first.")
             continue

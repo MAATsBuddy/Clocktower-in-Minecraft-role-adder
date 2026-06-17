@@ -1,6 +1,7 @@
 import json
 import os
 import unicodedata
+import shutil
 
 DB_FILE = "customSaved.json"
 
@@ -93,11 +94,21 @@ def bulk_process_characters(db_list):
     imported_file = os.path.join("script", "set_imported.mcfunction")
     imported_lines = ["\n## CUSTOM\n"]
     
+    # Map team types to set_char_data type parameter (pluralized for non-townsfolk)
+    team_type_map = {
+        "townsfolk": "townsfolk",
+        "outsider": "outsiders",
+        "minion": "minions",
+        "demon": "demons",
+        "traveller": "travelers"
+    }
+    
     for item in db_list:
         char_id = item.get("id")
         char_team = item.get("team", "").lower()
+        char_type = team_type_map.get(char_team, char_team)  # Use mapped type or fallback to char_team
         imported_lines.append(
-            f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_char_data {{char:{char_id},type:{char_team}}}\n"
+            f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_char_data {{char:{char_id},type:{char_type}}}\n"
         )
     _insert_block_at(imported_file, 206, imported_lines)
 
@@ -139,21 +150,55 @@ def bulk_process_characters(db_list):
     # 5. Handle Client Asset Directory Pack Generation
     _generate_client_assets(db_list)
 
+def reset_to_original():
+    """Restores files from .orig backups and deletes the local database."""
+    files_to_restore = [
+        os.path.join("util", "reset_in_roles.mcfunction"),
+        os.path.join("script", "set_imported.mcfunction"),
+        os.path.join("admin", "setup", "set_from_menu.mcfunction"),
+        os.path.join("start_game", "roles", "set_grim_roles.mcfunction"),
+        os.path.join("start_game", "roles", "announce.mcfunction"),
+        os.path.join("data", "character_data.mcfunction")
+    ]
+
+    for file_path in files_to_restore:
+        backup = file_path + ".orig"
+        if os.path.exists(backup):
+            shutil.copy2(backup, file_path)
+            print(f"Restored: {file_path}")
+
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+        print(f"Deleted database: {DB_FILE}")
+
+    asset_dir = "Blood on the Moddedtower"
+    if os.path.exists(asset_dir):
+        shutil.rmtree(asset_dir)
+        print(f"Removed asset directory: {asset_dir}")
+
+def _ensure_backup(file_path):
+    """Creates a .orig backup of the file if it doesn't already exist."""
+    if os.path.exists(file_path) and not os.path.exists(file_path + ".orig"):
+        shutil.copy2(file_path, file_path + ".orig")
+        print(f"Created backup for: {file_path}")
+
 def modify_reset_in_roles(char_id):
     """Appends the scoreboard command to util/reset_in_roles.mcfunction."""
     file_path = os.path.join("util", "reset_in_roles.mcfunction")
+    _ensure_backup(file_path)
     new_line = f"\nscoreboard players set {char_id} role_list 0"
     try:
         os.makedirs("util", exist_ok=True)
         with open(file_path, "a", encoding="utf-8") as file:
             file.write(new_line)
-        print(f"✓ Updated reset_in_roles for: {char_id}")
+        print(f"Updated reset_in_roles for: {char_id}")
     except Exception as e:
-        print(f"✗ Failed to update {file_path}: {e}")
+        print(f"Failed to update {file_path}: {e}")
 
 def _insert_block_at(file_path, target_line, new_lines):
     """Inserts a list of lines starting at a target line index (1-indexed)."""
     try:
+        _ensure_backup(file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         if not os.path.exists(file_path):
             with open(file_path, "w", encoding="utf-8") as file:
@@ -170,19 +215,20 @@ def _insert_block_at(file_path, target_line, new_lines):
         
         with open(file_path, "w", encoding="utf-8") as file:
             file.writelines(lines)
-        print(f"✓ Inserted custom block into {file_path} starting at line {target_line}")
+        print(f"Inserted custom block into {file_path} starting at line {target_line}")
     except Exception as e:
-        print(f"✗ Failed to write to {file_path}: {e}")
+        print(f"Failed to write to {file_path}: {e}")
 
 def _append_lines_to_file(file_path, new_lines):
     """Directly appends lines to the end of a file without safety searching."""
     try:
+        _ensure_backup(file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "a", encoding="utf-8") as file:
             file.writelines(new_lines)
-        print(f"✓ Appended custom block to the end of {file_path}")
+        print(f"Appended custom block to the end of {file_path}")
     except Exception as e:
-        print(f"✗ Failed to append to {file_path}: {e}")
+        print(f"Failed to append to {file_path}: {e}")
 
 def _format_nbt_string(text):
     """Encodes strings to preserve internal double quotes and unicode tokens safely inside NBT."""
@@ -201,6 +247,7 @@ def _format_reminder_text(text):
 def _inject_into_nbt_file_start(file_path, db_list):
     """Injects character configurations directly inside NBT scope right after '\"characters\": {'."""
     try:
+        _ensure_backup(file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         
         if not os.path.exists(file_path):
@@ -263,9 +310,9 @@ def _inject_into_nbt_file_start(file_path, db_list):
         with open(file_path, "w", encoding="utf-8") as file:
             file.writelines(lines)
             
-        print(f"✓ Successfully injected characters at the top of NBT scope for {file_path}")
+        print(f"Successfully injected characters at the top of NBT scope for {file_path}")
     except Exception as e:
-        print(f"✗ Failed to modify NBT file structure {file_path}: {e}")
+        print(f"Failed to modify NBT file structure {file_path}: {e}")
 
 def _generate_client_assets(db_list):
     """Generates the client side asset directory tree with meta structures and language files."""
@@ -303,6 +350,6 @@ def _generate_client_assets(db_list):
         with open(os.path.join(lang_dir, "en_us.json"), "w", encoding="utf-8") as file:
             json.dump(lang_data, file, indent=4, ensure_ascii=False)
             
-        print(f"✓ Successfully built client-side Resource Pack at: '{base_dir}'")
+        print(f"Successfully built client-side Resource Pack at: '{base_dir}'")
     except Exception as e:
-        print(f"✗ Failed to compile client assets package: {e}")
+        print(f"Failed to compile client assets package: {e}")
