@@ -151,7 +151,7 @@ def bulk_process_characters(db_list):
     _generate_client_assets(db_list)
 
 def reset_to_original():
-    """Restores files from .orig backups and deletes the local database."""
+    """Restores files from .orig backups."""
     files_to_restore = [
         os.path.join("util", "reset_in_roles.mcfunction"),
         os.path.join("script", "set_imported.mcfunction"),
@@ -166,11 +166,7 @@ def reset_to_original():
         if os.path.exists(backup):
             shutil.copy2(backup, file_path)
             print(f"Restored: {file_path}")
-
-    if os.path.exists(DB_FILE):
-        os.remove(DB_FILE)
-        print(f"Deleted database: {DB_FILE}")
-
+    
     asset_dir = "Blood on the Moddedtower"
     if os.path.exists(asset_dir):
         shutil.rmtree(asset_dir)
