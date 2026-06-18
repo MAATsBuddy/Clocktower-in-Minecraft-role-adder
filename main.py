@@ -5,6 +5,7 @@ def main():
     print("-> Paste character JSONs to save them to the database.")
     print("-> Type 'insert' to generate commands for all saved characters.")
     print("-> Type 'reset' to restore files to their original state.")
+    print("-> Type 'remove [character id]' to delete a character.")
     print("-> Leave the input completely blank and press Enter to exit.\n")
     
     while True:
@@ -31,6 +32,15 @@ def main():
         if user_input.lower() == "reset":
             app.reset_to_original()
             print("\nReset process finished.")
+            continue
+            
+        # Scenario: Remove a character
+        if user_input.lower().startswith("remove "):
+            char_id = user_input[7:].strip()
+            if char_id:
+                app.remove_character(char_id)
+            else:
+                print("Please provide a character ID to remove. Usage: remove [id]")
             continue
             
         # Scenario 2: Generate/Insert All Bulk Process

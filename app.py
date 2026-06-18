@@ -6,10 +6,7 @@ import shutil
 DB_FILE = "customSaved.json"
 
 def _sanitize_id(text):
-    """
-    Converts text to lowercase, replaces spaces with underscores, 
-    and strips accents/special characters (e.g., 'Ancião' -> 'anciao').
-    """
+    # Converts text to lowercase, replaces space with underscore and "unpecialize" characters (e.g., 'Mago Ancião' -> 'mago_anciao')
     if not text:
         return ""
     text = unicodedata.normalize('NFD', str(text))
@@ -17,7 +14,7 @@ def _sanitize_id(text):
     return text.lower().strip().replace(" ", "_")
 
 def parse_and_save_json(json_string):
-    """Parses the JSON string, extracts only useful information, saves/updates it in the local database."""
+    # Parses the JSON string and saves or updates it in CustomSaved.json
     try:
         new_data = json.loads(json_string)
         char_id = _sanitize_id(new_data.get("id"))
@@ -29,7 +26,7 @@ def parse_and_save_json(json_string):
             print("Error: JSON is missing 'id', 'name', 'ability' or 'team'.")
             return None
 
-        # Filter out only the useful information to be saved
+        # Get only useful information
         filtered_data = {
             "id": char_id,
             "name": char_name,
@@ -69,7 +66,7 @@ def parse_and_save_json(json_string):
         return None
 
 def load_database():
-    """Loads and returns the current database list."""
+    # Loads and returns the database
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r", encoding="utf-8") as file:
             try:
@@ -78,23 +75,44 @@ def load_database():
                 return []
     return []
 
+def remove_character(char_id):
+    # Removes character
+    char_id = _sanitize_id(char_id)
+    db = load_database()
+    if not db:
+        print("Database is empty.")
+        return False
+    
+    new_db = [item for item in db if item["id"] != char_id]
+    
+    if len(new_db) == len(db):
+        print(f"Character '{char_id}' not found in database.")
+        return False
+    
+    with open(DB_FILE, "w", encoding="utf-8") as file:
+        json.dump(new_db, file, indent=2, ensure_ascii=False)
+    
+    print(f"-> Removed character '{char_id}' from {DB_FILE}")
+    return True
+
 def bulk_process_characters(db_list):
-    """Processes all characters in the database and writes them cleanly to files."""
+    # Processes all characters in the database and writes them to the files
     if not db_list:
-        print("No characters found in database to process.")
+        print("No characters found in the database to process :(")
         return
 
-    print(f"\nProcessing {len(db_list)} characters...")
+    print(f"\nAdding {len(db_list)} characters...")
 
     # 1. Append to reset_in_roles
     for item in db_list:
         modify_reset_in_roles(item["id"])
+    print(f"Successfully put characters in {os.path.join('util', 'reset_in_roles.mcfunction')}")
 
     # 2. Handle script/set_imported.mcfunction (Insert block starting at Line 206)
     imported_file = os.path.join("script", "set_imported.mcfunction")
     imported_lines = ["\n## CUSTOM\n"]
     
-    # Map team types to set_char_data type parameter (pluralized for non-townsfolk)
+    # Map team types for set_char_data
     team_type_map = {
         "townsfolk": "townsfolk",
         "outsider": "outsiders",
@@ -112,7 +130,7 @@ def bulk_process_characters(db_list):
         )
     _insert_block_at(imported_file, 206, imported_lines)
 
-    # 3. Handle End-Of-File simple append files
+    # 3. separete vanilla characters of custom characters with a 600-inf CUSTOM (I don't know if this can actually go infinite)
     menu_file = os.path.join("admin", "setup", "set_from_menu.mcfunction")
     grim_file = os.path.join("start_game", "roles", "set_grim_roles.mcfunction")
     announce_file = os.path.join("start_game", "roles", "announce.mcfunction")
@@ -143,15 +161,15 @@ def bulk_process_characters(db_list):
     _append_lines_to_file(grim_file, grim_lines)
     _append_lines_to_file(announce_file, announce_lines)
 
-    # 4. Handle data/character_data.mcfunction (Injected right after "characters": {)
+    # 4. Handle data/character_data.mcfunction (Kinda scuffed, just injects the data right after "characters": {\)
     character_data_file = os.path.join("data", "character_data.mcfunction")
     _inject_into_nbt_file_start(character_data_file, db_list)
 
-    # 5. Handle Client Asset Directory Pack Generation
+    # 5. Does the resourcepack for the clients
     _generate_client_assets(db_list)
 
 def reset_to_original():
-    """Restores files from .orig backups."""
+    # Restores files from .orig backups and deletes resourcepack for clients
     files_to_restore = [
         os.path.join("util", "reset_in_roles.mcfunction"),
         os.path.join("script", "set_imported.mcfunction"),
@@ -173,13 +191,13 @@ def reset_to_original():
         print(f"Removed asset directory: {asset_dir}")
 
 def _ensure_backup(file_path):
-    """Creates a .orig backup of the file if it doesn't already exist."""
+    # Creates a .orig backup of the files if it doesn't already exist
     if os.path.exists(file_path) and not os.path.exists(file_path + ".orig"):
         shutil.copy2(file_path, file_path + ".orig")
         print(f"Created backup for: {file_path}")
 
 def modify_reset_in_roles(char_id):
-    """Appends the scoreboard command to util/reset_in_roles.mcfunction."""
+    # Appends the scoreboard command to util/reset_in_roles.mcfunction
     file_path = os.path.join("util", "reset_in_roles.mcfunction")
     _ensure_backup(file_path)
     new_line = f"\nscoreboard players set {char_id} role_list 0"
@@ -187,12 +205,11 @@ def modify_reset_in_roles(char_id):
         os.makedirs("util", exist_ok=True)
         with open(file_path, "a", encoding="utf-8") as file:
             file.write(new_line)
-        print(f"Updated reset_in_roles for: {char_id}")
     except Exception as e:
-        print(f"Failed to update {file_path}: {e}")
+        print(f"Failed to put characters in {file_path}: {e}")
 
 def _insert_block_at(file_path, target_line, new_lines):
-    """Inserts a list of lines starting at a target line index (1-indexed)."""
+    # Inserts a list of lines starting at a target line
     try:
         _ensure_backup(file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -211,37 +228,37 @@ def _insert_block_at(file_path, target_line, new_lines):
         
         with open(file_path, "w", encoding="utf-8") as file:
             file.writelines(lines)
-        print(f"Inserted custom block into {file_path} starting at line {target_line}")
+        print(f"Successfully put characters in {file_path}")
     except Exception as e:
-        print(f"Failed to write to {file_path}: {e}")
+        print(f"Failed to put characters in {file_path}: {e}")
 
 def _append_lines_to_file(file_path, new_lines):
-    """Directly appends lines to the end of a file without safety searching."""
+    # Directly appends lines to the end of a file
     try:
         _ensure_backup(file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "a", encoding="utf-8") as file:
             file.writelines(new_lines)
-        print(f"Appended custom block to the end of {file_path}")
+        print(f"Successfully put characters in {file_path}")
     except Exception as e:
-        print(f"Failed to append to {file_path}: {e}")
+        print(f"Failed to put characters in {file_path}: {e}")
 
 def _format_nbt_string(text):
-    """Encodes strings to preserve internal double quotes and unicode tokens safely inside NBT."""
+    # Encodes strings to preserve internal double quotes and unicode tokens safely inside NBT
     if not text:
         return ""
     escaped_quotes = str(text).replace('"', '\\"')
     return escaped_quotes.encode('unicode-escape').decode('utf-8').replace('\\\\u', '\\u')
 
 def _format_reminder_text(text):
-    """Converts reminder text to lower case and replaces spaces with underlines."""
+    # Converts reminder text to lower case and replaces spaces with underlines, probably useless now that I made _sanitizer_id but who knows (I should know)
     text = _sanitize_id(text)
     if not text:
         return ""
     return str(text).lower().replace(" ", "_")
 
 def _inject_into_nbt_file_start(file_path, db_list):
-    """Injects character configurations directly inside NBT scope right after '\"characters\": {'."""
+    # Injects character configurations directly inside NBT scope right after '\"characters\": {'.
     try:
         _ensure_backup(file_path)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -261,7 +278,7 @@ def _inject_into_nbt_file_start(file_path, db_list):
                 break
 
         if target_index == -1:
-            print(f"✗ Error: Could not find '\"characters\": {{\\' structure inside {file_path}")
+            print(f"Failed to put characters in {file_path}: Could not find '\"characters\": {{' structure")
             return
 
         injected_lines = []
@@ -306,12 +323,12 @@ def _inject_into_nbt_file_start(file_path, db_list):
         with open(file_path, "w", encoding="utf-8") as file:
             file.writelines(lines)
             
-        print(f"Successfully injected characters at the top of NBT scope for {file_path}")
+        print(f"Successfully put characters in {file_path}")
     except Exception as e:
-        print(f"Failed to modify NBT file structure {file_path}: {e}")
+        print(f"Failed to put characters in {file_path}: {e}")
 
 def _generate_client_assets(db_list):
-    """Generates the client side asset directory tree with meta structures and language files."""
+    # Generates the client side resourcepack
     base_dir = "Blood on the Moddedtower"
     lang_dir = os.path.join(base_dir, "assets", "minecraft", "lang")
     
@@ -346,6 +363,6 @@ def _generate_client_assets(db_list):
         with open(os.path.join(lang_dir, "en_us.json"), "w", encoding="utf-8") as file:
             json.dump(lang_data, file, indent=4, ensure_ascii=False)
             
-        print(f"Successfully built client-side Resource Pack at: '{base_dir}'")
+        print(f"Successfully made the client resourcepack {base_dir}")
     except Exception as e:
-        print(f"Failed to compile client assets package: {e}")
+        print(f"Failed to make the client resourcepack {base_dir}: {e}")
