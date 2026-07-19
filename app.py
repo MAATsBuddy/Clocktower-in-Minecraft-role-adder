@@ -168,8 +168,15 @@ def bulk_process_characters(db_list):
     # 5. Does the resourcepack for the clients
     _generate_client_assets(db_list)
 
+def _backup_path_for(file_path):
+    normalized_path = os.path.normpath(file_path)
+    if os.path.isabs(normalized_path):
+        normalized_path = os.path.relpath(normalized_path, os.getcwd())
+    return os.path.join("original_files", normalized_path)
+
+
 def reset_to_original():
-    # Restores files from .orig backups and deletes resourcepack for clients
+    # Restores files from the dedicated backup folder and deletes resourcepack for clients
     files_to_restore = [
         os.path.join("util", "reset_in_roles.mcfunction"),
         os.path.join("script", "set_imported.mcfunction"),
@@ -180,10 +187,11 @@ def reset_to_original():
     ]
 
     for file_path in files_to_restore:
-        backup = file_path + ".orig"
-        if os.path.exists(backup):
-            shutil.copy2(backup, file_path)
-            print(f"Restored: {file_path}")
+        backup_path = _backup_path_for(file_path)
+        if os.path.exists(backup_path):
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            shutil.copy2(backup_path, file_path)
+            print(f"Restored: {file_path} from {backup_path}")
     
     asset_dir = "Blood on the Moddedtower"
     if os.path.exists(asset_dir):
@@ -191,10 +199,12 @@ def reset_to_original():
         print(f"Removed asset directory: {asset_dir}")
 
 def _ensure_backup(file_path):
-    # Creates a .orig backup of the files if it doesn't already exist
-    if os.path.exists(file_path) and not os.path.exists(file_path + ".orig"):
-        shutil.copy2(file_path, file_path + ".orig")
-        print(f"Created backup for: {file_path}")
+    # Creates a backup copy in original_files/<relative-path> if it doesn't already exist
+    backup_path = _backup_path_for(file_path)
+    if os.path.exists(file_path) and not os.path.exists(backup_path):
+        os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+        shutil.copy2(file_path, backup_path)
+        print(f"Created backup for: {file_path} at {backup_path}")
 
 def modify_reset_in_roles(char_id):
     # Appends the scoreboard command to util/reset_in_roles.mcfunction
@@ -299,7 +309,7 @@ def _inject_into_nbt_file_start(file_path, db_list):
                 
             reminders = item.get("reminders", [])
             if reminders:
-                reminder_strings = [f"{{text:{_format_reminder_text(rem)},icon:{char_id}}}" for rem in reminders]
+                reminder_strings = [f"{{text:{char_id}_{_format_reminder_text(rem)},icon:{char_id}}}" for rem in reminders]
                 nbt_fields.append(f'"reminders": [{",".join(reminder_strings)}]')
                 
             jinxes = item.get("jinxes", [])

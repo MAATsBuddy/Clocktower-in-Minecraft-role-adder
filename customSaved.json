@@ -1,24 +1,4 @@
 [
-    {
-    "id": "jax",
-    "name": "Jax",
-    "team": "townsfolk",
-    "ability": "Se você enlouquecer: descubra o personagem dos seus vizinhos",
-    "firstNightReminder": null,
-    "otherNightReminder": null,
-    "reminders": [],
-    "jinxes": []
-  },
-  {
-    "id": "kaufmo",
-    "name": "Kaufmo",
-    "team": "townsfolk",
-    "ability": "Você começa sabendo 2 pessoas que são forasteiros, envenenados ou minions.",
-    "firstNightReminder": null,
-    "otherNightReminder": null,
-    "reminders": [],
-    "jinxes": []
-  },
   {
     "id": "sunmoon",
     "name": "Sun n Moon",
@@ -29,6 +9,18 @@
     "reminders": [
       "learn",
       "learn"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "pomni",
+    "name": "Pomni",
+    "team": "townsfolk",
+    "ability": "Uma vez por jogo, em público, escolha alguém: ela não esta mais enlouquecendo",
+    "firstNightReminder": null,
+    "otherNightReminder": null,
+    "reminders": [
+      "Calmo"
     ],
     "jinxes": []
   },
@@ -59,34 +51,21 @@
     "id": "marthamildenhall",
     "name": "Martha Mildenhall",
     "team": "townsfolk",
-    "ability": "se um vizinho enlouquecer você morre e descobre que o demônio é uma entre 2 pessoas",
+    "ability": "se um vizinho enlouquecer você morre e descobre que o demônio é 1 entre 2 pessoas",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [],
     "jinxes": []
   },
   {
-    "id": "pomni",
-    "name": "Pomni",
-    "team": "townsfolk",
-    "ability": "Toda noite, escolha alguém: se ela morrer por enlouquecer ela não mata ninguém junto",
-    "firstNightReminder": null,
-    "otherNightReminder": null,
-    "reminders": [
-      "Calmo"
-    ],
-    "jinxes": []
-  },
-  {
     "id": "gangle",
     "name": "Gangle",
     "team": "townsfolk",
-    "ability": "Uma vez por dia, faça uma pergunta de sim/não: se a resposta for não você perde a habilidade.",
+    "ability": "Uma vez por dia, privadamente pergunte: se a resposta for não você acha que vai enlouquecer.",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [
-      "enloquecer falso",
-      "Errou"
+      "enloquecer falso"
     ],
     "jinxes": []
   },
@@ -95,6 +74,16 @@
     "name": "Scratch",
     "team": "townsfolk",
     "ability": "O demônio é o narrador (o narrador esta em qualquer posição que quiser) [-1 demônio, -1 minion]",
+    "firstNightReminder": null,
+    "otherNightReminder": null,
+    "reminders": [],
+    "jinxes": []
+  },
+  {
+    "id": "kaufmo",
+    "name": "Kaufmo",
+    "team": "townsfolk",
+    "ability": "Você começa sabendo 2 pessoas que são forasteiros, envenenados ou minions. [+0 ou +1 forasteiro]",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [],
@@ -126,7 +115,7 @@
     "id": "zooble",
     "name": "Zooble",
     "team": "townsfolk",
-    "ability": "Três vezes por jogo, escolha alguém no privado e descubra o papel dela, uma das três vezes vão estar erradas",
+    "ability": "Três vezes por jogo, escolha alguém no privado e descubra o papel dela, uma das três vezes vão esta errada",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [
@@ -157,20 +146,20 @@
     "jinxes": []
   },
   {
-    "id": "gummigoo",
-    "name": "Gummigoo",
+    "id": "disappearingguy",
+    "name": "Disappearing Guy",
     "team": "outsider",
-    "ability": "Você acha que é um minion, mas não é. Você explode violentamente no fim do jogo.",
+    "ability": "Você é kicado quando tenta falar, se for executado: passe a habilidade anterior para alguém",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [],
     "jinxes": []
   },
   {
-    "id": "disappearingguy",
-    "name": "Disappearing Guy",
+    "id": "gummigoo",
+    "name": "Gummigoo",
     "team": "outsider",
-    "ability": "Você é kicado quando tenta falar, se for executado: passe a habilidade para alguém (não a segunda parte)",
+    "ability": "Você acha que é um minion e que um minion é o demônio, mas não é. O minion sabe do seu papel",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [],
@@ -224,7 +213,7 @@
     "id": "gloink_queen",
     "name": "Gloink Queen",
     "team": "demon",
-    "ability": "Toda noite par: escolha alguém para enlouquecer. [+1 minion]",
+    "ability": "Toda noite par: escolha alguém para enlouquecer. [+2 forasteiros]",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [
@@ -249,12 +238,22 @@
     "id": "caine",
     "name": "Caine",
     "team": "demon",
-    "ability": "Noite impar, o narrador escolhe alguém para enlouquecer. Noites par você envenena alguém até a próxima noite",
+    "ability": "Noite ímpar, o narrador escolhe alguém para enlouquecer. Noite par você envenena alguém até a próxima noite",
     "firstNightReminder": null,
     "otherNightReminder": null,
     "reminders": [
       "enlouquecer"
     ],
+    "jinxes": []
+  },
+  {
+    "id": "jax",
+    "name": "Jax",
+    "team": "townsfolk",
+    "ability": "Se você enlouquecer: descubra o personagem dos seus vizinhos",
+    "firstNightReminder": null,
+    "otherNightReminder": null,
+    "reminders": [],
     "jinxes": []
   }
 ]
