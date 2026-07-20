@@ -1,91 +1,132 @@
 import app
+import json
 import tkinter as tk
 
 #WINDOW MAGIC
 root = tk.Tk()
-root.geometry("900x300")
+root.geometry("900x500")
+root.minsize(600, 300)
 root.title("MAAT's Buddy's Sybillian's Minecraft Blood on the Clocktower Custom character Installer")
 
 #   COMMANDS
 
+def outputy_message(message: str, emote: str = "happy"):
+    if emote == "yey":
+        outputy_msg.config(text=f"[^ ω ^] - {message}")
+    elif emote == "killer":
+        outputy_msg.config(text=f"[ಠ ω ಠ] - {message}")
+    elif emote == "error":
+        outputy_msg.config(text=f"[X o X] - {message}")
+    elif emote == "fish":
+        outputy_msg.config(text=f"( ͡° ͜ʖ ͡°) - {message}")
+    else:
+        outputy_msg.config(text=f"[O u O] - {message}")
+
 def add_to_list():
-    user_input = entry.get()
+    user_input = entry.get("1.0", tk.END).strip()
+    outputy_message("You gotta put something in first silly!", "happy")
     if user_input:
         app.parse_and_save_json(user_input)
-        entry.delete(0, tk.END)
+        entry.delete("1.0", tk.END)
+    update_char_list()
 
 def insert_characters():
     db_list = app.load_database()
     if db_list:
         app.bulk_process_characters(db_list)
-        print("\nAll characters successfully installed into .mcfunction files!")
+        outputy_message("All characters successfully installed into .mcfunction files!", "yey")
     else:
-        print("\nDatabase is empty! Paste some character JSONs first.")
+        outputy_message("Database is empty! Paste some character JSONs first.", "error")
 
 def remove_character():
-    char_id = entry.get()
+    char_id = entry.get("1.0", tk.END).strip()
     if char_id:
         app.remove_character(char_id)
-        entry.delete(0, tk.END)
+        entry.delete("1.0", tk.END)
+        update_char_list()
     else:
-        print("Please provide a character ID to remove. Type ONLY the ID")
+        outputy_message("Please provide a character ID to remove. Type ONLY the ID", "error")
 
 def reset_to_original():
     app.reset_to_original()
-    print("\nReset process finished.")
+    
+def update_char_list():
+    with open("CustomSaved.json", "r") as f:
+        db_list = json.load(f)
+
+    text_list.delete(0, tk.END)
+    for char in db_list:
+        text_list.insert(tk.END, f"{char['name']}")
+
+def show_character():
+    selected_index = text_list.curselection()
+    if selected_index:
+        char_name = text_list.get(selected_index)
+        with open("CustomSaved.json", "r", encoding="utf-8") as f:
+            db_list = json.load(f)
+        
+        target_char = next((item for item in db_list if item.get("name") == char_name), None)
+
+        entry.delete(1.0, tk.END)
+        entry.insert(tk.END, json.dumps(target_char, indent=2, ensure_ascii=False))
+        print(f"Showing info for {char_name}: {json.dumps(target_char, indent=2, ensure_ascii=False)}")
+
+        outputy_message(f"Showing info for {char_name}", "yey")
 
 #   FRAMES
 
-button_frame = tk.Frame(root)
-button_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+output_frame = tk.Frame(root, bg="chartreuse4")
+output_frame.grid(row=0, column=0, sticky="news")
+root.columnconfigure(0, weight=1)
 
-output_frame = tk.Frame(root)
-output_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
+input_frame = tk.Frame(root, bg="light gray")
+input_frame.grid(row=1, column=0, rowspan=5, sticky="news")
+root.columnconfigure(0, weight=1)
 
 for row_num in range(root.grid_size()[1]):
     root.rowconfigure(row_num, weight=1)
-for col_num in range(root.grid_size()[0]):
-    root.columnconfigure(col_num, weight=1)
 
-#   STUFF
+root.rowconfigure(1, weight=5)
 
-entry = tk.Entry(button_frame)
-entry.grid(row=0, column=0, rowspan=4, sticky="nsew")
+#   INPUT
 
-entry.bind("<Return>", lambda event: add_to_list())
+entry = tk.Text(input_frame, font=("Arial", 12), wrap="word", height=4, width=20)
+entry.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew", padx=5, pady=20)
 
-add_btn = tk.Button(button_frame, text="add character to list", command=add_to_list)
-add_btn.grid(row=0, column=1)
+add_btn = tk.Button(input_frame, text="add character to list", command=add_to_list, relief="raised")
+add_btn.grid(row=0, column=2, sticky="nsew", padx=2, pady=10)
 
-insert_btn = tk.Button(button_frame, text="Put all saved character in the file\n(remember to reset before adding new characters)", command=insert_characters)
-insert_btn.grid(row=1, column=1)
+insert_btn = tk.Button(input_frame, text="Put all saved character in the file\n(remember to reset before adding new characters)", command=insert_characters, relief="raised")
+insert_btn.grid(row=1, column=2, sticky="nsew", padx=2, pady=5)
 
-remove_btn = tk.Button(button_frame, text="remove character\n(put id in textbox)", command=remove_character)
-remove_btn.grid(row=2, column=1)
+remove_btn = tk.Button(input_frame, text="remove character\n(put id in textbox)", command=remove_character, relief="raised")
+remove_btn.grid(row=2, column=2, sticky="nsew", padx=2, pady=5)
 
-reset_btn = tk.Button(button_frame, text="reset to original", command=reset_to_original)
-reset_btn.grid(row=3, column=1)
+reset_btn = tk.Button(input_frame, text="reset to original", command=reset_to_original, relief="raised")
+reset_btn.grid(row=3, column=2, sticky="nsew", padx=2, pady=10)
 
-for row_num in range(button_frame.grid_size()[1]):
-    button_frame.rowconfigure(row_num, weight=1)
-for col_num in range(button_frame.grid_size()[0]):
-    button_frame.columnconfigure(col_num, weight=1)
+text_list = tk.Listbox(input_frame)
+text_list.grid(row=0, column=3, rowspan=4, sticky="nsew", padx=5, pady=10)
+text_list.bind("<Double-Button-1>", lambda event: show_character())
 
-button_frame.columnconfigure(0, weight=3)
+fish_btn = tk.Button(input_frame, text="Fish\nbutton", command=lambda: outputy_message("And you know what that means!", "fish"))
+fish_btn.grid(row=3, column=4)
 
-fish_btn = tk.Button(output_frame, text="Fish\nbutton")
-fish_btn.grid(row=0, column=1)
+for row_num in range(input_frame.grid_size()[1]):
+    input_frame.rowconfigure(row_num, weight=1)
+for col_num in range(input_frame.grid_size()[0]):
+    input_frame.columnconfigure(col_num, weight=1)
 
-text_list = tk.Listbox(output_frame)
-text_list.grid(row=0, column=0, sticky="nsew")
+input_frame.columnconfigure(0, weight=3)
+input_frame.columnconfigure(2, weight=3)
 
-for row_num in range(output_frame.grid_size()[1]):
-    output_frame.rowconfigure(row_num, weight=1)
-for col_num in range(output_frame.grid_size()[0]):
-    output_frame.columnconfigure(col_num, weight=1)
+#   OUTPUTY
 
-output_frame.columnconfigure(0, weight=3)
+outputy_msg = tk.Label(output_frame, text="[O u O] - Hi! I'm Outputy! The text area that gives feedback on any input", font=("Arial", 12), bg="chartreuse2", wraplength=500)
+outputy_msg.grid(row=0, column=0, sticky="w")
+output_frame.rowconfigure(0, weight=1)
 
+update_char_list()
 root.mainloop()
 
 # def main():

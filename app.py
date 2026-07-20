@@ -1,7 +1,8 @@
 import json
 import os
-import unicodedata
 import shutil
+import unicodedata
+import __main__ as main
 
 DB_FILE = "customSaved.json"
 
@@ -23,7 +24,8 @@ def parse_and_save_json(json_string):
         char_ability = new_data.get("ability")
         
         if not char_id or not char_team or not char_ability or not char_name:
-            print("Error: JSON is missing 'id', 'name', 'ability' or 'team'.")
+            
+            main.outputy_message("Error: JSON is missing 'id', 'name', 'ability' or 'team'.", "error")
             return None
 
         # Get only useful information
@@ -52,17 +54,17 @@ def parse_and_save_json(json_string):
         existing_index = next((i for i, item in enumerate(db) if item["id"] == char_id), None)
         if existing_index is not None:
             db[existing_index] = filtered_data
-            print(f"-> Updated existing character '{char_id}' in {DB_FILE}")
+            main.outputy_message(f"Updated existing character '{char_id}' in {DB_FILE}")
         else:
             db.append(filtered_data)
-            print(f"-> Added new character '{char_id}' to {DB_FILE}")
+            main.outputy_message(f"Added new character '{char_id}' to {DB_FILE}", "yey")
 
         with open(DB_FILE, "w", encoding="utf-8") as file:
             json.dump(db, file, indent=2, ensure_ascii=False)
 
         return db
     except json.JSONDecodeError:
-        print("Error: Invalid JSON string provided.")
+        main.outputy_message("Error: Invalid JSON string provided.", "error")
         return None
 
 def load_database():
@@ -80,25 +82,25 @@ def remove_character(char_id):
     char_id = _sanitize_id(char_id)
     db = load_database()
     if not db:
-        print("Database is empty.")
+        main.outputy_message("Database is empty.")
         return False
     
     new_db = [item for item in db if item["id"] != char_id]
     
     if len(new_db) == len(db):
-        print(f"Character '{char_id}' not found in database.")
+        main.outputy_message(f"Character '{char_id}' not found in database.")
         return False
     
     with open(DB_FILE, "w", encoding="utf-8") as file:
         json.dump(new_db, file, indent=2, ensure_ascii=False)
     
-    print(f"-> Removed character '{char_id}' from {DB_FILE}")
+    main.outputy_message(f"Removed character '{char_id}' from {DB_FILE}", "killer")
     return True
 
 def bulk_process_characters(db_list):
     # Processes all characters in the database and writes them to the files
     if not db_list:
-        print("No characters found in the database to process :(")
+        main.outputy_message("No characters found in the database to process :(", "error")
         return
 
     print(f"\nAdding {len(db_list)} characters...")
@@ -197,6 +199,7 @@ def reset_to_original():
     if os.path.exists(asset_dir):
         shutil.rmtree(asset_dir)
         print(f"Removed asset directory: {asset_dir}")
+    main.outputy_message("files reset to their original state successfully.")
 
 def _ensure_backup(file_path):
     # Creates a backup copy in original_files/<relative-path> if it doesn't already exist
@@ -216,7 +219,7 @@ def modify_reset_in_roles(char_id):
         with open(file_path, "a", encoding="utf-8") as file:
             file.write(new_line)
     except Exception as e:
-        print(f"Failed to put characters in {file_path}: {e}")
+        main.outputy_message(f"Failed to put characters in {file_path}: {e}", "error")
 
 def _insert_block_at(file_path, target_line, new_lines):
     # Inserts a list of lines starting at a target line
@@ -348,7 +351,7 @@ def _generate_client_assets(db_list):
         mcmeta_data = {
             "pack": {
                 "pack_format": 65,
-                "description": "Custom assets for\nBotC modded.",
+                "description": "Custom assets for\nBotC custom characters.",
                 "max_format": 1000,
                 "min_format": 65
             }
@@ -373,6 +376,6 @@ def _generate_client_assets(db_list):
         with open(os.path.join(lang_dir, "en_us.json"), "w", encoding="utf-8") as file:
             json.dump(lang_data, file, indent=4, ensure_ascii=False)
             
-        print(f"Successfully made the client resourcepack {base_dir}")
+        main.outputy_message(f"Successfully made the client resourcepack {base_dir}", "yey")
     except Exception as e:
-        print(f"Failed to make the client resourcepack {base_dir}: {e}")
+        main.outputy_message(f"Failed to make the client resourcepack {base_dir}: {e}", "error")
