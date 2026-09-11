@@ -2,6 +2,7 @@ import app
 import json
 import tkinter as tk
 from tkinter import filedialog
+import multiprocessing
 
 #WINDOW MAGIC
 root = tk.Tk()
@@ -148,7 +149,12 @@ outputy_msg.grid(row=0, column=0, sticky="w")
 output_frame.rowconfigure(0, weight=1)
 
 update_char_list()
-root.mainloop()
+
+if __name__ == "__main__":
+
+    multiprocessing.freeze_support()
+
+    root.mainloop()
 
 # def main():
 #     print("=== Blood on the Clocktower Custom Installer ===")
@@ -204,6 +210,3 @@ root.mainloop()
             
 #         # Scenario 5: Save incoming JSON data
 #         app.parse_and_save_json(user_input)
-
-# if __name__ == "__main__":
-#     main()

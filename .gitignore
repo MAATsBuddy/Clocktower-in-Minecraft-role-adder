@@ -11,6 +11,7 @@ util/
 Sybillian tips.txt
 test_input.json
 customSaved.json
+icon.png
 
 # Python virtual environment
 venv/
