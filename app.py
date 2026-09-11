@@ -14,10 +14,19 @@ def _sanitize_id(text):
     text = "".join([c for c in text if not unicodedata.combining(c)])
     return text.lower().strip().replace(" ", "_")
 
+def check_if_db_exists():
+    # Checks if customSaved.json exists, if not creates an empty list in it
+    if not os.path.exists(DB_FILE) or os.path.getsize(DB_FILE) == 0:
+        with open(DB_FILE, "w", encoding="utf-8") as file:
+            json.dump([], file)
+
 def parse_and_save_json(json_string):
     # Parses the JSON string and saves or updates it in CustomSaved.json
     try:
         new_data = json.loads(json_string)
+        if not isinstance(new_data, dict):
+                    main.outputy_message("Error: JSON is not a valid object.", "error")
+                    return None
         char_id = _sanitize_id(new_data.get("id"))
         char_name = new_data.get("name")
         char_team = new_data.get("team")
@@ -39,17 +48,14 @@ def parse_and_save_json(json_string):
             "reminders": new_data.get("reminders", []),
             "jinxes": new_data.get("jinxes", [])
         }
-
-        if os.path.exists(DB_FILE):
-            with open(DB_FILE, "r", encoding="utf-8") as file:
-                try:
-                    db = json.load(file)
-                    if not isinstance(db, list):
-                        db = []
-                except json.JSONDecodeError:
+        check_if_db_exists()
+        with open(DB_FILE, "r", encoding="utf-8") as file:
+            try:
+                db = json.load(file)
+                if not isinstance(db, list):
                     db = []
-        else:
-            db = []
+            except json.JSONDecodeError:
+                db = []
 
         existing_index = next((i for i, item in enumerate(db) if item["id"] == char_id), None)
         if existing_index is not None:
@@ -69,22 +75,27 @@ def parse_and_save_json(json_string):
 
 def load_database():
     # Loads and returns the database
-    if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r", encoding="utf-8") as file:
-            try:
-                return json.load(file)
-            except json.JSONDecodeError:
-                return []
+    check_if_db_exists()
+    with open(DB_FILE, "r", encoding="utf-8") as file:
+        try:
+            return json.load(file)
+        except json.JSONDecodeError:
+            return []
     return []
 
 def remove_character(char_id):
     # Removes character
-    char_id = _sanitize_id(char_id)
-    db = load_database()
-    if not db:
-        main.outputy_message("Database is empty.")
-        return False
-    
+    try:
+        json_id = json.loads(char_id)
+        print(type(json_id))
+        if isinstance(json_id, dict):
+            char_id = _sanitize_id(json_id.get("id"))
+        else:
+            char_id = _sanitize_id(char_id)
+    except json.JSONDecodeError:
+        char_id = _sanitize_id(char_id)
+    check_if_db_exists()
+    db = load_database()    
     new_db = [item for item in db if item["id"] != char_id]
     
     if len(new_db) == len(db):
@@ -344,10 +355,11 @@ def _generate_client_assets(db_list):
     # Generates the client side resourcepack
     base_dir = "Blood on the Moddedtower"
     lang_dir = os.path.join(base_dir, "assets", "minecraft", "lang")
-    
+    roles_dir = os.path.join(base_dir, "assets", "ct", "textures", "roles") # not used YET! On later update game will add the textures for you :D
     try:
         os.makedirs(lang_dir, exist_ok=True)
-        
+        os.makedirs(roles_dir, exist_ok=True) # Useless for now...
+
         mcmeta_data = {
             "pack": {
                 "pack_format": 65,

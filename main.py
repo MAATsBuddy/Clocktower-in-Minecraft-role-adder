@@ -1,6 +1,7 @@
 import app
 import json
 import tkinter as tk
+from tkinter import filedialog
 
 #WINDOW MAGIC
 root = tk.Tk()
@@ -30,6 +31,22 @@ def add_to_list():
         entry.delete("1.0", tk.END)
     update_char_list()
 
+def import_json():
+    file_path = filedialog.askopenfilename(title="Select your JSON file with all your custom characters (it can be a script with vanilla characters) ", filetypes=[("JSON files", "*.json")])
+    if file_path:
+        with open(file_path, "r", encoding="utf-8") as file:
+            try:
+                json_data = json.load(file)
+                for item in json_data:
+                    item_dumped = json.dumps(item)
+                    app.parse_and_save_json(item_dumped)
+                update_char_list()
+                outputy_message("Imported/Updated as many characters as possible.", "yey")
+            except json.JSONDecodeError:
+                outputy_message("Error: Invalid JSON file.", "error")
+    else:
+        outputy_message("Error: No file selected.", "error")
+
 def insert_characters():
     db_list = app.load_database()
     if db_list:
@@ -45,12 +62,13 @@ def remove_character():
         entry.delete("1.0", tk.END)
         update_char_list()
     else:
-        outputy_message("Please provide a character ID to remove. Type ONLY the ID", "error")
+        outputy_message("Please provide a character ID to remove. Or a json string if an id", "error")
 
 def reset_to_original():
     app.reset_to_original()
-    
+
 def update_char_list():
+    app.check_if_db_exists()
     with open("CustomSaved.json", "r") as f:
         db_list = json.load(f)
 
@@ -86,20 +104,20 @@ root.columnconfigure(0, weight=1)
 for row_num in range(root.grid_size()[1]):
     root.rowconfigure(row_num, weight=1)
 
-root.rowconfigure(1, weight=5)
+root.rowconfigure(1, weight=6)
 
 #   INPUT
 
 entry = tk.Text(input_frame, font=("Arial", 12), wrap="word", height=4, width=20)
 entry.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew", padx=5, pady=20)
 
-add_btn = tk.Button(input_frame, text="add character to list", command=add_to_list, relief="raised")
+add_btn = tk.Button(input_frame, text="-------------------->\nadd character to list", command=add_to_list, relief="raised")
 add_btn.grid(row=0, column=2, sticky="nsew", padx=2, pady=10)
 
 insert_btn = tk.Button(input_frame, text="Put all saved character in the file\n(remember to reset before adding new characters)", command=insert_characters, relief="raised")
 insert_btn.grid(row=1, column=2, sticky="nsew", padx=2, pady=5)
 
-remove_btn = tk.Button(input_frame, text="remove character\n(put id in textbox)", command=remove_character, relief="raised")
+remove_btn = tk.Button(input_frame, text="remove character\n(put id in textbox or double click name on the right)", command=remove_character, relief="raised")
 remove_btn.grid(row=2, column=2, sticky="nsew", padx=2, pady=5)
 
 reset_btn = tk.Button(input_frame, text="reset to original", command=reset_to_original, relief="raised")
@@ -109,8 +127,11 @@ text_list = tk.Listbox(input_frame)
 text_list.grid(row=0, column=3, rowspan=4, sticky="nsew", padx=5, pady=10)
 text_list.bind("<Double-Button-1>", lambda event: show_character())
 
-fish_btn = tk.Button(input_frame, text="Fish\nbutton", command=lambda: outputy_message("And you know what that means!", "fish"))
+fish_btn = tk.Button(input_frame, text="Fish", command=lambda: outputy_message("And you know what that means!", "fish"))
 fish_btn.grid(row=3, column=4)
+
+import_btn = tk.Button(input_frame, text="Import .json", command=import_json)
+import_btn.grid(row=2, column=4)
 
 for row_num in range(input_frame.grid_size()[1]):
     input_frame.rowconfigure(row_num, weight=1)
@@ -122,7 +143,7 @@ input_frame.columnconfigure(2, weight=3)
 
 #   OUTPUTY
 
-outputy_msg = tk.Label(output_frame, text="[O u O] - Hi! I'm Outputy! The text area that gives feedback on any input", font=("Arial", 12), bg="chartreuse2", wraplength=500)
+outputy_msg = tk.Label(output_frame, text="[O u O] - Hi! I'm Outputy! The text area that gives feedback on any input", font=("Arial", 12), bg="chartreuse2", wraplength=700)
 outputy_msg.grid(row=0, column=0, sticky="w")
 output_frame.rowconfigure(0, weight=1)
 
