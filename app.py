@@ -143,11 +143,12 @@ def bulk_process_characters(db_list):
         )
     _insert_block_at(imported_file, 206, imported_lines)
 
-    # 3. separete vanilla characters of custom characters with a 600-inf CUSTOM (I don't know if this can actually go infinite)
+    # 3. separete vanilla characters of custom characters with a 600-inf CUSTOM (Obviusly this doesn't go to infinite)
     menu_file = os.path.join("admin", "setup", "set_from_menu.mcfunction")
     grim_file = os.path.join("start_game", "roles", "set_grim_roles.mcfunction")
     announce_file = os.path.join("start_game", "roles", "announce.mcfunction")
-    
+
+    # Prepare lines for each file, don't try to replace them with one single variable, you did this two times already
     menu_lines = ["\n## 600-inf CUSTOM\n"]
     grim_lines = ["\n## 600-inf CUSTOM\n"]
     announce_lines = ["\n## 600-inf CUSTOM\n"]
@@ -271,7 +272,7 @@ def _format_nbt_string(text):
     # Encodes strings to preserve internal double quotes and unicode tokens safely inside NBT
     if not text:
         return ""
-    escaped_quotes = str(text).replace('"', '\\"')
+    escaped_quotes = str(text).replace('"', '*')
     return escaped_quotes.encode('unicode-escape').decode('utf-8').replace('\\\\u', '\\u')
 
 def _format_reminder_text(text):
@@ -288,8 +289,8 @@ def _inject_into_nbt_file_start(file_path, db_list):
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         
         if not os.path.exists(file_path):
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write('data merge storage ct:character_data \\\n{\\\n\t"characters": {\\\n\t}\\\n}')
+            print(f"Failed to find character_data file {file_path}.")
+            return
 
         with open(file_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -355,7 +356,7 @@ def _generate_client_assets(db_list):
     # Generates the client side resourcepack
     base_dir = "Blood on the Moddedtower"
     lang_dir = os.path.join(base_dir, "assets", "minecraft", "lang")
-    roles_dir = os.path.join(base_dir, "assets", "ct", "textures", "roles") # not used YET! On later update game will add the textures for you :D
+    roles_dir = os.path.join(base_dir, "assets", "ct", "textures", "role", "faded") # not used YET! On later update game will add the textures for you :D
     try:
         os.makedirs(lang_dir, exist_ok=True)
         os.makedirs(roles_dir, exist_ok=True) # Useless for now...

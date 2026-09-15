@@ -8,7 +8,7 @@ import multiprocessing
 root = tk.Tk()
 root.geometry("900x500")
 root.minsize(600, 300)
-root.title("MAAT's Buddy's Sybillian's Minecraft Blood on the Clocktower Custom character Installer")
+root.title("MAAT's Buddy's Sybillian's Clocktower in Minecraft Custom character Installer")
 
 #   COMMANDS
 
@@ -49,12 +49,10 @@ def import_json():
         outputy_message("Error: No file selected.", "error")
 
 def insert_characters():
+    app.reset_to_original()
     db_list = app.load_database()
-    if db_list:
-        app.bulk_process_characters(db_list)
-        outputy_message("All characters successfully installed into .mcfunction files!", "yey")
-    else:
-        outputy_message("Database is empty! Paste some character JSONs first.", "error")
+    outputy_message("All characters successfully installed into .mcfunction files!", "yey")
+    app.bulk_process_characters(db_list)    
 
 def remove_character():
     char_id = entry.get("1.0", tk.END).strip()
@@ -64,6 +62,13 @@ def remove_character():
         update_char_list()
     else:
         outputy_message("Please provide a character ID to remove. Or a json string if an id", "error")
+
+def clear_all():
+    db_list = app.load_database()
+    for char in db_list:
+        app.remove_character(char.get("id"))
+    update_char_list()
+    outputy_message("All characters have been BRUTALLY DESTROYED!", "yey")
 
 def reset_to_original():
     app.reset_to_original()
@@ -112,10 +117,10 @@ root.rowconfigure(1, weight=6)
 entry = tk.Text(input_frame, font=("Arial", 12), wrap="word", height=4, width=20)
 entry.grid(row=0, column=0, rowspan=4, columnspan=2, sticky="nsew", padx=5, pady=20)
 
-add_btn = tk.Button(input_frame, text="-------------------->\nadd character to list", command=add_to_list, relief="raised")
+add_btn = tk.Button(input_frame, text="-------------------->\nadd/update character to list", command=add_to_list, relief="raised")
 add_btn.grid(row=0, column=2, sticky="nsew", padx=2, pady=10)
 
-insert_btn = tk.Button(input_frame, text="Put all saved character in the file\n(remember to reset before adding new characters)", command=insert_characters, relief="raised")
+insert_btn = tk.Button(input_frame, text="Put all saved character into the game files\n(the file resets automatically before putting new characters)", command=insert_characters, relief="raised")
 insert_btn.grid(row=1, column=2, sticky="nsew", padx=2, pady=5)
 
 remove_btn = tk.Button(input_frame, text="remove character\n(put id in textbox or double click name on the right)", command=remove_character, relief="raised")
@@ -133,6 +138,9 @@ fish_btn.grid(row=3, column=4)
 
 import_btn = tk.Button(input_frame, text="Import .json", command=import_json)
 import_btn.grid(row=2, column=4)
+
+clear_btn = tk.Button(input_frame, text="Clear all", command=clear_all)
+clear_btn.grid(row=1, column=4)
 
 for row_num in range(input_frame.grid_size()[1]):
     input_frame.rowconfigure(row_num, weight=1)
