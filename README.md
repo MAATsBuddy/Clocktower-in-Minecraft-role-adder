@@ -69,9 +69,7 @@ When you first open you'll see something like this:
 - The "Import .json" button opens a window where you can select a script with custom characters, it will add all of them to the list.
 - The fish button. ><>
 
-
 ## AI usage
-When I first started this project I used AI thinking I wouldn't be able to do it, but I was wrong. Still, the project still has old parts of it that were written by AI but I don't plan on having AI touch this code again
+When I first started this project I used AI thinking I wouldn't be able to do it, but I was wrong. Still, the project has old parts of it that were written by AI, but I don't plan on having AI touch this code again. Hopefully this doesn't deter you from the project, it was still made with love, passion and help from the community.
 
-
-TL;DR: I have a bit of AI from old code but I don't plan on using it to code anymore.
+TL;DR: I have a bit of AI from old code but I don't plan on using it anymore.
