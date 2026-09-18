@@ -12,10 +12,9 @@ This .exe is all you need* to add all the custom characters you want to [Sybilli
 - The ui for the script can get a bit wonky.
 
 
-## Set up
+## Set up (YOU ONLY NEED THE .EXE)
 
-
-1. **YOU ONLY NEED THE .EXE**, all other files will be created bt it
+1. download the .exe, **that the only file you'll need**, all other files will be created bt it
 
 
 2. go to (**[your server folder]**\resources\datapack\required) and extract the ct.zip into a ct folder
@@ -37,7 +36,7 @@ Here's the step by step you'll have to follow every time you need to put custom 
 2. After that, press "Put all saved character into the game files", this will create two files, one with the resource pack and another with the original files
 
 
-3. go to the resource pack and get to assets\ct\textures\roles, you put there the image of the characters, with their name being the **ID**, not the name. If you want you can copy and paste the same images and names into *faded*, but they are only used when the storyteller is building a bag.
+3. go to the resource pack and get to assets\ct\textures\role, you put there the image of the characters, with their name being the **ID**, not the name. If you want you can copy and paste the same images and names into *faded*, but they are only used when the storyteller is building a bag.
 
 
 4. Now you need to put that resource pack into the right folder (**[your server folder]**\resources\resourcepack\required) (you don't need to zip the folders back)
@@ -51,7 +50,7 @@ And done! Now you can open/reload the server and there should be all the charact
 
 ### Interface
 When you first open you'll see something like this:
-![Interface](images/Interface.png)
+![Interface](Interface.png)
 
 
 - On the top there is Outputy, they will give you feedback on any input you make.
@@ -74,4 +73,4 @@ When you first open you'll see something like this:
 When I first started this project I used AI thinking I wouldn't be able to do it, but I was wrong. Still, the project still has old parts of it that were written by AI but I don't plan on having AI touch this code again
 
 
-TL;DR: I have a bit of AI from old code but I don't plan on using it to code anymore.
+TL;DR: there is a bit of AI from old code but I don't plan on using it to code anymore.

@@ -356,7 +356,7 @@ def _generate_client_assets(db_list):
     # Generates the client side resourcepack
     base_dir = "Blood on the Moddedtower"
     lang_dir = os.path.join(base_dir, "assets", "minecraft", "lang")
-    roles_dir = os.path.join(base_dir, "assets", "ct", "textures", "role", "faded") # not used YET! On later update game will add the textures for you :D
+    roles_dir = os.path.join(base_dir, "assets", "ct", "textures", "role", "faded") # Doesn't add the images ):
     try:
         os.makedirs(lang_dir, exist_ok=True)
         os.makedirs(roles_dir, exist_ok=True) # Useless for now...

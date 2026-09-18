@@ -8,10 +8,12 @@ start_game/
 util/
 
 # Files to ignore
+.gitignore
 Sybillian tips.txt
 test_input.json
 customSaved.json
 icon.png
+icon.ico
 
 # Python virtual environment
 venv/
