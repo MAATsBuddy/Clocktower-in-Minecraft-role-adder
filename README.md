@@ -10,9 +10,9 @@ This .exe is all you need* to add all the custom characters you want to [Sybilli
 - Putting a character with " in their text will convert it to * to avoid problems.
 - The ui for the script can get a bit wonky.
 
-## Set up (YOU ONLY NEED THE .EXE)
+## Set up
 
-1. download the .exe, **that the only file you'll need**, all other files will be created bt it
+1. download the latest release, it should be only an .exe, **that the only file you'll need**, all other files will be created by it
 
 
 2. go to (**[your server folder]**\resources\datapack\required) and extract the ct.zip into a ct folder
