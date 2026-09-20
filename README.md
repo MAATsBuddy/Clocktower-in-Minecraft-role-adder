@@ -2,19 +2,17 @@
 This .exe is all you need* to add all the custom characters you want to [Sybillian's Clocktower in Minecraft](https://modrinth.com/modpack/blood-on-the-clocktower)
 
 
-*You still need to put the images in the resource pack, I'm working to automate this.
+*This doesn't automate the whole resource pack (images and moving to the right folder), and I doesn't support lorics, fabled or night order.
+(These are all planned to work in the future)
 
 
 ### Known issues
 - Putting a character with " in their text will convert it to * to avoid problems.
-- This tool doesn't support travellers, Fabled and Loric.
-- There is something that makes a reminder token not load its text properly, you can still read it but it will look weird, maybe try removing the space?
 - The ui for the script can get a bit wonky.
 
+## Set up
 
-## Set up (YOU ONLY NEED THE .EXE)
-
-1. download the .exe, **that the only file you'll need**, all other files will be created bt it
+1. download the latest release, it should be only an .exe, **that the only file you'll need**, all other files will be created by it
 
 
 2. go to (**[your server folder]**\resources\datapack\required) and extract the ct.zip into a ct folder
