@@ -7,12 +7,25 @@ import __main__ as main
 DB_FILE = "customSaved.json"
 
 def _sanitize_id(text):
-    # Converts text to lowercase, replaces space with underscore and "unpecialize" characters (e.g., 'Mago Ancião' -> 'mago_anciao')
+    # Converts text to lowercase, replaces space with underscore and unpecialize characters
     if not text:
         return ""
     text = unicodedata.normalize('NFD', str(text))
     text = "".join([c for c in text if not unicodedata.combining(c)])
     return text.lower().strip().replace(" ", "_")
+
+def convert_team_name(team_name):
+    # Converts team name to name used in the code
+    team_type_map = {
+        "townsfolk": "townsfolk",
+        "outsider": "outsiders",
+        "minion": "minions",
+        "demon": "demons",
+        "traveller": "travellers",
+        "fabled": "npcs",
+        "loric": "npcs"
+    }
+    return team_type_map.get(team_name)
 
 def check_if_db_exists():
     # Checks if customSaved.json exists, if not creates an empty list in it
@@ -29,7 +42,7 @@ def parse_and_save_json(json_string):
                     return None
         char_id = _sanitize_id(new_data.get("id"))
         char_name = new_data.get("name")
-        char_team = new_data.get("team")
+        char_team = convert_team_name(new_data.get("team"))
         char_ability = new_data.get("ability")
         
         if not char_id or not char_team or not char_ability or not char_name:
@@ -118,6 +131,8 @@ def bulk_process_characters(db_list):
 
     # 1. Append to reset_in_roles
     for item in db_list:
+        if item.get("team") == "npcs":
+            continue  # Skip npcs
         modify_reset_in_roles(item["id"])
     print(f"Successfully put characters in {os.path.join('util', 'reset_in_roles.mcfunction')}")
 
@@ -125,21 +140,11 @@ def bulk_process_characters(db_list):
     imported_file = os.path.join("script", "set_imported.mcfunction")
     imported_lines = ["\n## CUSTOM\n"]
     
-    # Map team types for set_char_data
-    team_type_map = {
-        "townsfolk": "townsfolk",
-        "outsider": "outsiders",
-        "minion": "minions",
-        "demon": "demons",
-        "traveller": "travelers"
-    }
-    
     for item in db_list:
         char_id = item.get("id")
         char_team = item.get("team", "").lower()
-        char_type = team_type_map.get(char_team, char_team)  # Use mapped type or fallback to char_team
         imported_lines.append(
-            f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_char_data {{char:{char_id},type:{char_type}}}\n"
+            f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_char_data {{char:{char_id},type:{char_team}}}\n"
         )
     _insert_block_at(imported_file, 206, imported_lines)
 
@@ -155,12 +160,15 @@ def bulk_process_characters(db_list):
 
     team_colors = {
         "townsfolk": "#1464e7",
-        "outsider": "#1464e7",
-        "minion": "#ff4949",
-        "demon": "#cf0606"
+        "outsiders": "#1464e7",
+        "minions": "#ff4949",
+        "demons": "#cf0606",
+        "travellers": "#FFFF55",
     }
 
     for index, item in enumerate(db_list):
+        if item.get("team") == "npcs":
+            continue  # Skip npcs
         char_id = item.get("id")
         char_team = item.get("team", "").lower()
         numeric_id = 600 + index
