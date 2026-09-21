@@ -5,6 +5,8 @@ This .exe is all you need* to add all the custom characters you want to [Sybilli
 *This doesn't automate the whole resource pack (images and moving to the right folder), and I doesn't support travellers or night order.
 (These are all planned to work in the future)
 
+Video tutorial
+https://www.youtube.com/watch?v=SODU941HsFQ&t=244s
 
 ### Known issues
 - Putting a character with " in their text will convert it to * to avoid problems.
