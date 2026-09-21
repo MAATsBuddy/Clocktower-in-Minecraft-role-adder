@@ -2,7 +2,7 @@
 This .exe is all you need* to add all the custom characters you want to [Sybillian's Clocktower in Minecraft](https://modrinth.com/modpack/blood-on-the-clocktower)
 
 
-*This doesn't automate the whole resource pack (images and moving to the right folder), and I doesn't support lorics, fabled or night order.
+*This doesn't automate the whole resource pack (images and moving to the right folder), and I doesn't support travellers or night order.
 (These are all planned to work in the future)
 
 
