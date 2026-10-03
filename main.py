@@ -42,7 +42,7 @@ def import_json():
                     item_dumped = json.dumps(item)
                     app.parse_and_save_json(item_dumped)
                 update_char_list()
-                outputy_message("Imported/Updated as many characters as possible.", "yey")
+                outputy_message("Imported/Updated all characters found.", "yey")
             except json.JSONDecodeError:
                 outputy_message("Error: Invalid JSON file.", "error")
     else:
@@ -97,14 +97,46 @@ def show_character():
 
         outputy_message(f"Showing info for {char_name}", "yey")
 
+def make_bag_text():
+    file_path = filedialog.askopenfilename(title="Select your JSON file with all your custom characters (it can be a script with vanilla characters) ", filetypes=[("JSON files", "*.json")])
+    if file_path:
+        with open(file_path, "r", encoding="utf-8") as file:
+            try:
+                json_data = json.load(file)
+                bag_txt.delete("1.0", tk.END)
+
+                bag_txt.insert(tk.END, "[{\"id\":\"_meta\",\"author\":\"")
+                bag_txt.insert(tk.END, json_data[0]['author'])
+                bag_txt.insert(tk.END, "\",\"name\":\"")
+                bag_txt.insert(tk.END, json_data[0]['name'])
+                bag_txt.insert(tk.END, "\"}")
+
+                for item in json_data[1:]:
+                    if 'id' not in item:
+                        bag_txt.insert(tk.END, ",\"")
+                        bag_txt.insert(tk.END, item)
+                        bag_txt.insert(tk.END, "\"")
+                        continue
+                    bag_txt.insert(tk.END, ",")
+                    bag_txt.insert(tk.END, json.dumps(item['id'], ensure_ascii=False))
+
+                bag_txt.insert(tk.END, "]")
+                outputy_message("Formed your bag! Now just copy this and paste in the text box in \"change script\"", "yey")
+            except json.JSONDecodeError:
+                outputy_message("Error: Invalid JSON file.", "error")
+    else:
+        outputy_message("Error: No file selected.", "error")
 #   FRAMES
 
 output_frame = tk.Frame(root, bg="chartreuse4")
 output_frame.grid(row=0, column=0, sticky="news")
-root.columnconfigure(0, weight=1)
 
 input_frame = tk.Frame(root, bg="light gray")
 input_frame.grid(row=1, column=0, rowspan=5, sticky="news")
+
+under_frame = tk.Frame(root, bg="light gray")
+under_frame.grid(row=6, column=0, sticky="news")
+
 root.columnconfigure(0, weight=1)
 
 for row_num in range(root.grid_size()[1]):
@@ -147,7 +179,7 @@ for row_num in range(input_frame.grid_size()[1]):
 for col_num in range(input_frame.grid_size()[0]):
     input_frame.columnconfigure(col_num, weight=1)
 
-input_frame.columnconfigure(0, weight=3)
+under_frame.rowconfigure(0, weight=1)
 input_frame.columnconfigure(2, weight=3)
 
 #   OUTPUTY
@@ -156,6 +188,19 @@ outputy_msg = tk.Label(output_frame, text="[O u O] - Hi! I'm Outputy! The text a
 outputy_msg.grid(row=0, column=0, sticky="w")
 output_frame.rowconfigure(0, weight=1)
 
+#   SCRIPT TEXT
+
+add_btn = tk.Button(under_frame, text="Make Bag Text", command=make_bag_text, relief="raised")
+add_btn.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+under_frame.columnconfigure(0, weight=1)
+
+bag_txt = tk.Text(under_frame, font=("Arial", 10), height=5, width=110, wrap="word")
+bag_txt.insert(tk.END, "(Press the \"Make Bag Text\" button to make the text for you to put in your bag and load the script)")
+bag_txt.grid(row=0, column=1, sticky="wsen", padx=10, pady=10)
+under_frame.columnconfigure(1, weight=2)
+
+under_frame.rowconfigure(0, weight=1)
+
 update_char_list()
 
 if __name__ == "__main__":
@@ -163,58 +208,3 @@ if __name__ == "__main__":
     multiprocessing.freeze_support()
 
     root.mainloop()
-
-# def main():
-#     print("=== Blood on the Clocktower Custom Installer ===")
-#     print("-> Paste character JSONs to save them to the database.")
-#     print("-> Type 'insert' to generate commands for all saved characters.")
-#     print("-> Type 'reset' to restore files to their original state.")
-#     print("-> Type 'remove [character id]' to delete a character.")
-#     print("-> Leave the input completely blank and press Enter to exit.\n")
-
-#     while True:
-#         print("-" * 50)
-#         print("Paste JSON (Press Enter -> Ctrl+Z -> Enter again to submit)")
-#         print("OR type 'insert' to generate commands / press Enter on a blank line to exit:")
-        
-#         lines = []
-#         while True:
-#             try:
-#                 line = input()
-#                 lines.append(line)
-#             except EOFError:
-#                 break
-#         user_input = "".join(lines).strip()
-        
-#         # Scenario 1: Exit
-#         if not user_input:
-#             print("\nExiting program. Goodbye!")
-#             break
-
-#         # Scenario 2: Reset files to original state
-#         if user_input.lower() == "reset":
-#             app.reset_to_original()
-#             print("\nReset process finished.")
-#             continue
-            
-#         # Scenario 3: Remove a character
-#         if user_input.lower().startswith("remove "):
-#             char_id = user_input[7:].strip()
-#             if char_id:
-#                 app.remove_character(char_id)
-#             else:
-#                 print("Please provide a character ID to remove. Usage: remove [id]")
-#             continue
-            
-#         # Scenario 4: Generate/Insert All Bulk Process
-#         if user_input.lower() == "insert":
-#             db_list = app.load_database()
-#             if db_list:
-#                 app.bulk_process_characters(db_list)
-#                 print("\nAll characters successfully installed into .mcfunction files!")
-#             else:
-#                 print("\nDatabase is empty! Paste some character JSONs first.")
-#             continue
-            
-#         # Scenario 5: Save incoming JSON data
-#         app.parse_and_save_json(user_input)

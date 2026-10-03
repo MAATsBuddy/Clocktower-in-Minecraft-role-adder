@@ -1,1 +1,271 @@
-[]
+[
+  {
+    "id": "spectre_demons_dupery",
+    "name": "Spectre",
+    "team": "demons",
+    "ability": "Each Night* pick 2 people, the first dies and the second doesn't wake up [-1 Outsider]",
+    "firstNightReminder": null,
+    "otherNightReminder": "Spectre points to a player then to another, the first dies and the second doesn't wake up",
+    "reminders": [
+      "Dead",
+      "Doesn't wake"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "baa_demons_dupery",
+    "name": "Baa",
+    "team": "demons",
+    "ability": "Each Night* pick someone they die, Outsiders think they are a Townsfolk, They learn who they are when they die [+1 Outsider]",
+    "firstNightReminder": null,
+    "otherNightReminder": "The Baa points to a player, Wake any outsiders that have died any tell them who they are.",
+    "reminders": [
+      "Dead",
+      "Outsider"
+    ],
+    "jinxes": [
+      {
+        "id": "rambler_demons_dupery",
+        "reason": "The Rambler knows who they are"
+      },
+      {
+        "id": "damsel",
+        "reason": "The Damsel knows who they are"
+      },
+      {
+        "id": "ogre",
+        "reason": "The Ogre knows who they are"
+      },
+      {
+        "id": "milkman_demons_dupery",
+        "reason": "The Milkman knows who they are"
+      },
+      {
+        "id": "zealot",
+        "reason": "The Zealot knows who they are"
+      },
+      {
+        "id": "puzzlemaster",
+        "reason": "The Puzzlemaster knows who they are"
+      },
+      {
+        "id": "saint",
+        "reason": "The Saint knows who they are"
+      },
+      {
+        "id": "butler",
+        "reason": "The Butler knows who they are"
+      },
+      {
+        "id": "drunk",
+        "reason": "The Drunk doesn't learn who they are"
+      },
+      {
+        "id": "lunatic",
+        "reason": "The Lunatic doesn't learn who they are, they think they are the demon."
+      },
+      {
+        "id": "klutz",
+        "reason": "When you learn you are the Klutz, claim to be the Klutz and pick someone before night deaths are announced."
+      },
+      {
+        "id": "moonchild",
+        "reason": "When you learn you are the Moonchild, claim to be the Moonchild and pick someone after night deaths are announced."
+      },
+      {
+        "id": "doppelganger_demons_dupery",
+        "reason": "The Doppelganger doesn't learn who they are, they think they are a in play townsfolk."
+      }
+    ]
+  },
+  {
+    "id": "shaman_demons_dupery",
+    "name": "Shaman",
+    "team": "minions",
+    "ability": "There can be duplicate Outsiders up to 3 of the same outsider [+1-2 Outsider]",
+    "firstNightReminder": null,
+    "otherNightReminder": null,
+    "reminders": [],
+    "jinxes": [
+      {
+        "id": "rambler_demons_dupery",
+        "reason": "Only 1 Rambler needs to ramble for it to count"
+      },
+      {
+        "id": "damsel",
+        "reason": "Only 1 Damsel may be in play"
+      },
+      {
+        "id": "saint",
+        "reason": "Only 1 Saint may be in play"
+      },
+      {
+        "id": "milkman_demons_dupery",
+        "reason": "Only 1 Milkman may be in play"
+      },
+      {
+        "id": "puzzlemaster",
+        "reason": "Only 1 Puzzlemaster may be in play"
+      },
+      {
+        "id": "zealot",
+        "reason": "If the only good players are Zealot's, they learn this and may vote how ever they like."
+      }
+    ]
+  },
+  {
+    "id": "recruiter_demons_dupery",
+    "name": "Recruiter",
+    "team": "minions",
+    "ability": "Once per game at night pick someone, if they're a Good Outsider they turn Evil, otherwise they learn who you are [+0-1 Outsiders]",
+    "firstNightReminder": "Wake the player to point or shake their head, if they pick someone that is not a good outsider wake that player and show the Recruiter token and point to the Recruiter.",
+    "otherNightReminder": "Wake the player to point or shake their head, if they pick someone that is not a good outsider wake that player and show the Recruiter token and point to the Recruiter.",
+    "reminders": [
+      "Used",
+      "Known"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "accountant_demons_dupery",
+    "name": "Accountant",
+    "team": "minions",
+    "ability": "Townsfolk abilities pick the player one step Clockwise of who they picked, a Good Townsfolk learns you are in play. [-1 Outsider]",
+    "firstNightReminder": "Wake a good player and show the Accountant token.",
+    "otherNightReminder": null,
+    "reminders": [
+      "Known"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "milkman_demons_dupery",
+    "name": "Milkman",
+    "team": "outsiders",
+    "ability": "After 3 days turn Evil, publicly say \"I am the Milkman, my milk is delicious\" to delay this by a day, tonight someone gets false info",
+    "firstNightReminder": "Mark the Milkman with the 3 Days token",
+    "otherNightReminder": "If the Milkman didn't Advertise place the next token, if there on the last day, wake them and tell them they are Evil.",
+    "reminders": [
+      "Advertised",
+      "False Info",
+      "3 Days",
+      "2 Days",
+      "1 Day"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "rambler_demons_dupery",
+    "name": "Rambler",
+    "team": "outsiders",
+    "ability": "Each day, be the first to nominate someone and talk about something unrelated, if you fail someone might not wake up tonight.",
+    "firstNightReminder": null,
+    "otherNightReminder": "If the Rambler didn't ramble you may mark someone with the \"Doesn't wake\" token",
+    "reminders": [
+      "Rambled",
+      "Doesn't wake"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "doppelganger_demons_dupery",
+    "name": "Doppelganger",
+    "team": "outsiders",
+    "ability": "You think you are a in play Townsfolk role and have their ability, either you or the person that had that role is drunk.",
+    "firstNightReminder": "Place the \"Doppelganger\" and \"Drunk\" tokens",
+    "otherNightReminder": null,
+    "reminders": [
+      "Doppelganger",
+      "Drunk"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "jinx_demons_dupery",
+    "name": "Jinx",
+    "team": "outsiders",
+    "ability": "When you die someone that would wake up at night doesn't",
+    "firstNightReminder": null,
+    "otherNightReminder": "Place the \"Doesn't wake\" token on someone that would've woken up",
+    "reminders": [
+      "Doesn't wake"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "mailman_demons_dupery",
+    "name": "Mailman",
+    "team": "townsfolk",
+    "ability": "Start knowing one role that is in play and one that isn't",
+    "firstNightReminder": "Wake the Mailman and show a role that is in play and then one that is not in play.",
+    "otherNightReminder": null,
+    "reminders": [],
+    "jinxes": []
+  },
+  {
+    "id": "poet_demons_dupery",
+    "name": "Poet",
+    "team": "townsfolk",
+    "ability": "Start knowing any info the storyteller gives you.",
+    "firstNightReminder": "Learn something from the storyteller",
+    "otherNightReminder": null,
+    "reminders": [],
+    "jinxes": []
+  },
+  {
+    "id": "architect_demons_dupery",
+    "name": "Architect",
+    "team": "townsfolk",
+    "ability": "Start knowing which half of the grim is more evil",
+    "firstNightReminder": "Learn which half is more evil, if equal learn whichever half.",
+    "otherNightReminder": null,
+    "reminders": [],
+    "jinxes": []
+  },
+  {
+    "id": "confessor_demons_dupery",
+    "name": "Confessor",
+    "team": "townsfolk",
+    "ability": "Each night if you are not drunk or poisoned learn that you are the Confessor, if someone  is \"mad\" they are sober and healthy confessor and is not they may be executed",
+    "firstNightReminder": "Wake the Confessor and tell them they are the Confessor",
+    "otherNightReminder": "Wake the Confessor and tell them they are the Confessor",
+    "reminders": [],
+    "jinxes": []
+  },
+  {
+    "id": "physician_demons_dupery",
+    "name": "Physician",
+    "team": "townsfolk",
+    "ability": "Each night pick someone, them and your Townsfolk neighbors are sober and healthy till dusk.",
+    "firstNightReminder": "The Physician points to some one, they and the Physician's neighbors are sober and healthy.",
+    "otherNightReminder": "The Physician points to some one, they and the Physician's neighbors are sober and healthy.",
+    "reminders": [
+      "Healed"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "baker_demons_dupery",
+    "name": "Baker",
+    "team": "townsfolk",
+    "ability": "Once per game if you publicly claim to be the baker, 1-3 Townsfolk become a Baker that night.",
+    "firstNightReminder": null,
+    "otherNightReminder": "If the Baker claimed, wake 1-3 players and show them they are the Baker.",
+    "reminders": [
+      "Claimed"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "vigilante_demons_dupery",
+    "name": "Vigilante",
+    "team": "townsfolk",
+    "ability": "If you died by the demon you learn this at night, in the day when your death is announced pick someone, if evil they die.",
+    "firstNightReminder": null,
+    "otherNightReminder": "If died to the demon, tell them.",
+    "reminders": [
+      "Revenge"
+    ],
+    "jinxes": []
+  }
+]

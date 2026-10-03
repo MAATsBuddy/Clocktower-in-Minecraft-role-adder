@@ -6,13 +6,14 @@ import __main__ as main
 
 DB_FILE = "customSaved.json"
 
-def _sanitize_id(text):
+def _sanitize(text):
     # Converts text to lowercase, replaces space with underscore and unpecialize characters
     if not text:
         return ""
     text = unicodedata.normalize('NFD', str(text))
     text = "".join([c for c in text if not unicodedata.combining(c)])
-    return text.lower().strip().replace(" ", "_")
+    text = text.lower().strip().replace("`", "").replace("'", "").replace('"', "*").replace(" ", "_")
+    return text
 
 def convert_team_name(team_name):
     # Converts team name to name used in the code
@@ -40,7 +41,7 @@ def parse_and_save_json(json_string):
         if not isinstance(new_data, dict):
                     main.outputy_message("Error: JSON is not a valid object.", "error")
                     return None
-        char_id = _sanitize_id(new_data.get("id"))
+        char_id = _sanitize(new_data.get("id"))
         char_name = new_data.get("name")
         char_team = convert_team_name(new_data.get("team"))
         char_ability = new_data.get("ability")
@@ -102,11 +103,11 @@ def remove_character(char_id):
         json_id = json.loads(char_id)
         print(type(json_id))
         if isinstance(json_id, dict):
-            char_id = _sanitize_id(json_id.get("id"))
+            char_id = _sanitize(json_id.get("id"))
         else:
-            char_id = _sanitize_id(char_id)
+            char_id = _sanitize(char_id)
     except json.JSONDecodeError:
-        char_id = _sanitize_id(char_id)
+        char_id = _sanitize(char_id)
     check_if_db_exists()
     db = load_database()    
     new_db = [item for item in db if item["id"] != char_id]
@@ -283,12 +284,7 @@ def _format_nbt_string(text):
     escaped_quotes = str(text).replace('"', '*')
     return escaped_quotes.encode('unicode-escape').decode('utf-8').replace('\\\\u', '\\u')
 
-def _format_reminder_text(text):
-    # Converts reminder text to lower case and replaces spaces with underlines, probably useless now that I made _sanitizer_id but who knows (I should know)
-    text = _sanitize_id(text)
-    if not text:
-        return ""
-    return str(text).lower().replace(" ", "_")
+
 
 def _inject_into_nbt_file_start(file_path, db_list):
     # Injects character configurations directly inside NBT scope right after '\"characters\": {'.
@@ -332,7 +328,7 @@ def _inject_into_nbt_file_start(file_path, db_list):
                 
             reminders = item.get("reminders", [])
             if reminders:
-                reminder_strings = [f"{{text:{char_id}_{_format_reminder_text(rem)},icon:{char_id}}}" for rem in reminders]
+                reminder_strings = [f"{{text:{char_id}_{_sanitize(rem)},icon:{char_id}}}" for rem in reminders]
                 nbt_fields.append(f'"reminders": [{",".join(reminder_strings)}]')
                 
             jinxes = item.get("jinxes", [])
@@ -391,7 +387,7 @@ def _generate_client_assets(db_list):
             
             reminders = item.get("reminders", [])
             for rem in reminders:
-                formatted_rem_key = _format_reminder_text(rem)
+                formatted_rem_key = _sanitize(rem)
                 lang_data[f"clocktower.reminder.{char_id}_{formatted_rem_key}.text"] = str(rem)
                 
         with open(os.path.join(lang_dir, "en_us.json"), "w", encoding="utf-8") as file:
