@@ -2,7 +2,7 @@
 This .exe is all you need* to add all the custom characters you want to [Sybillian's Clocktower in Minecraft](https://modrinth.com/modpack/blood-on-the-clocktower)
 
 
-*This doesn't automate the whole resource pack (images and moving to the right folder), and I doesn't support travellers or night order.
+*This doesn't automate the whole resource pack (images and moving to the right folder), and I doesn't support travellers.
 (These are all planned to work in the future)
 
 Video tutorial
@@ -10,7 +10,9 @@ https://www.youtube.com/watch?v=SODU941HsFQ&t=244s
 
 ### Known issues
 - Putting a character with " in their text will convert it to * to avoid problems.
+- Removes ' from night reminders
 - The ui for the script can get a bit wonky.
+- Night order (ironically) is not quite in the right order (and it doesn't support custom order (as in, the json of the character needs to have an "firstNight" or "otherNight" number for the night order to work ) )
 
 ## Set up
 
@@ -68,7 +70,6 @@ When you first open you'll see something like this:
 - The "Import .json" button opens a window where you can select a script with custom characters, it will add all of them to the list.
 - The fish button. ><>
 
+
 ## AI usage
 When I first started this project I used AI thinking I wouldn't be able to do it, but I was wrong. Still, the project has old parts of it that were written by AI, but I don't plan on having AI touch this code again. Hopefully this doesn't deter you from the project, it was still made with love, passion and help from the community.
-
-TL;DR: I have a bit of AI from old code but I don't plan on using it anymore.
