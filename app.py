@@ -17,8 +17,9 @@ def _sanitize(text):
 
 def convert_team_name(team_name):
     # Converts team name to name used in the code
+    if team_name == "townsfolk" or team_name == "outsiders" or team_name == "minions" or team_name == "demons" or team_name == "travellers" or team_name == "npcs":
+        return team_name
     team_type_map = {
-        "townsfolk": "townsfolk",
         "outsider": "outsiders",
         "minion": "minions",
         "demon": "demons",
@@ -57,7 +58,9 @@ def parse_and_save_json(json_string):
             "name": char_name,
             "team": char_team,
             "ability": char_ability,
+            "firstNight": new_data.get("firstNight"),
             "firstNightReminder": new_data.get("firstNightReminder"),
+            "otherNight": new_data.get("otherNight"),
             "otherNightReminder": new_data.get("otherNightReminder"),
             "reminders": new_data.get("reminders", []),
             "jinxes": new_data.get("jinxes", [])
@@ -130,15 +133,33 @@ def bulk_process_characters(db_list):
 
     print(f"\nAdding {len(db_list)} characters...")
 
-    # 1. Append to reset_in_roles
+    # Append to reset_in_roles
     for item in db_list:
         if item.get("team") == "npcs":
             continue  # Skip npcs
         modify_reset_in_roles(item["id"])
     print(f"Successfully put characters in {os.path.join('util', 'reset_in_roles.mcfunction')}")
 
-    # 2. Handle script/set_imported.mcfunction (Insert block starting at Line 206)
+    # Handle script/set_imported.mcfunction (The order is extremely important, this is why it creates another dict, so we can sort it by night order)
     imported_file = os.path.join("script", "set_imported.mcfunction")
+
+    order_list = []
+    for char in db_list:
+        order_list.append((char.get("firstNight"), char.get("otherNight"), char.get("id")))
+    order_list.sort(reverse=True, key=lambda night: night[1] if night[1] is not None else float('inf'))
+
+    for item in order_list:
+        if item[1] is not None:
+            char_id = item[2]
+            first_night_line = f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_other_nights_order {{char:{char_id}}}\n"
+            _insert_block_at(imported_file, item[1]+289, first_night_line, print_success=False)
+
+    for item in order_list:
+        if item[0] is not None:
+            char_id = item[2]
+            first_night_line = f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_first_night_order {{char:{char_id}}}\n"
+            _insert_block_at(imported_file, item[0]+208, first_night_line, print_success=False)
+
     imported_lines = ["\n## CUSTOM\n"]
     
     for item in db_list:
@@ -149,7 +170,7 @@ def bulk_process_characters(db_list):
         )
     _insert_block_at(imported_file, 206, imported_lines)
 
-    # 3. separete vanilla characters of custom characters with a 600-inf CUSTOM (Obviusly this doesn't go to infinite)
+    # separate vanilla characters from custom characters with a 600-inf CUSTOM (Obviusly this doesn't go to infinite)
     menu_file = os.path.join("admin", "setup", "set_from_menu.mcfunction")
     grim_file = os.path.join("start_game", "roles", "set_grim_roles.mcfunction")
     announce_file = os.path.join("start_game", "roles", "announce.mcfunction")
@@ -242,7 +263,7 @@ def modify_reset_in_roles(char_id):
     except Exception as e:
         main.outputy_message(f"Failed to put characters in {file_path}: {e}", "error")
 
-def _insert_block_at(file_path, target_line, new_lines):
+def _insert_block_at(file_path, target_line, new_lines, print_success=True):
     # Inserts a list of lines starting at a target line
     try:
         _ensure_backup(file_path)
@@ -262,7 +283,8 @@ def _insert_block_at(file_path, target_line, new_lines):
         
         with open(file_path, "w", encoding="utf-8") as file:
             file.writelines(lines)
-        print(f"Successfully put characters in {file_path}")
+        if print_success:
+            print(f"Successfully put characters in {file_path}")
     except Exception as e:
         print(f"Failed to put characters in {file_path}: {e}")
 

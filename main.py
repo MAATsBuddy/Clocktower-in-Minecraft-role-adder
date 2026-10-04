@@ -51,8 +51,8 @@ def import_json():
 def insert_characters():
     app.reset_to_original()
     db_list = app.load_database()
+    app.bulk_process_characters(db_list)
     outputy_message("All characters successfully installed into .mcfunction files!", "yey")
-    app.bulk_process_characters(db_list)    
 
 def remove_character():
     char_id = entry.get("1.0", tk.END).strip()
@@ -96,6 +96,18 @@ def show_character():
         print(f"Showing info for {char_name}: {json.dumps(target_char, indent=2, ensure_ascii=False)}")
 
         outputy_message(f"Showing info for {char_name}", "yey")
+
+def fish_test():
+    outputy_message("And you know what that means!", "fish")
+    db_list = app.load_database()
+    order_list = []
+    for char in db_list:
+        order_list.append((char.get("firstNight"), char.get("otherNight"), char.get("id")))
+    order_list.sort(reverse=True, key=lambda night: night[0] if night[0] is not None else float('inf'))
+    print(order_list)
+    order_list.sort(reverse=True, key=lambda night: night[1] if night[1] is not None else float('inf'))
+    print(order_list)
+
 
 def make_bag_text():
     file_path = filedialog.askopenfilename(title="Select your JSON file with all your custom characters (it can be a script with vanilla characters) ", filetypes=[("JSON files", "*.json")])
@@ -165,7 +177,7 @@ text_list = tk.Listbox(input_frame)
 text_list.grid(row=0, column=3, rowspan=4, sticky="nsew", padx=5, pady=10)
 text_list.bind("<Double-Button-1>", lambda event: show_character())
 
-fish_btn = tk.Button(input_frame, text="Fish", command=lambda: outputy_message("And you know what that means!", "fish"))
+fish_btn = tk.Button(input_frame, text="Fish", command=fish_test)
 fish_btn.grid(row=3, column=4)
 
 import_btn = tk.Button(input_frame, text="Import .json", command=import_json)
