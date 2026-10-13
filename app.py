@@ -152,13 +152,15 @@ def bulk_process_characters(db_list):
         if item[1] is not None:
             char_id = item[2]
             first_night_line = f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_other_nights_order {{char:{char_id}}}\n"
-            _insert_block_at(imported_file, item[1]+289, first_night_line, print_success=False)
+            print(f"{char_id} other night order: {item[1]} ({item[1]+289})")
+            _insert_block_at(imported_file, item[1]+287, first_night_line, print_success=False)
 
     for item in order_list:
         if item[0] is not None:
             char_id = item[2]
             first_night_line = f"execute if data storage ct:script script_imported{{script:[{char_id}]}} run function ct:script/set_first_night_order {{char:{char_id}}}\n"
-            _insert_block_at(imported_file, item[0]+208, first_night_line, print_success=False)
+            print(f"{char_id} first night order: {item[0]} ({item[0]+208})")
+            _insert_block_at(imported_file, item[0]+207, first_night_line, print_success=False)
 
     imported_lines = ["\n## CUSTOM\n"]
     
@@ -348,7 +350,7 @@ def _inject_into_nbt_file_start(file_path, db_list):
             if item.get("otherNightReminder"):
                 nbt_fields.append(f'"other": "{_format_nbt_string(item["otherNightReminder"])}"')
                 
-            reminders = item.get("reminders", [])
+            reminders = list(dict.fromkeys(item.get("reminders", [])))
             if reminders:
                 reminder_strings = [f"{{text:{char_id}_{_sanitize(rem)},icon:{char_id}}}" for rem in reminders]
                 nbt_fields.append(f'"reminders": [{",".join(reminder_strings)}]')
