@@ -12,7 +12,7 @@ https://www.youtube.com/watch?v=SODU941HsFQ&t=244s
 - Putting a character with " in their text will convert it to * to avoid problems.
 - Removes ' from night reminders
 - The ui for the script can get a bit wonky.
-- Night order (ironically) is not quite in the right order (and it doesn't support custom order (as in, the json of the character needs to have an "firstNight" or "otherNight" number for the night order to work ) )
+- Night order doesn't support custom order (as in, the json of the characters needs to have an "firstNight" or "otherNight" number/null for the night order to work )
 
 ## Set up
 
@@ -25,7 +25,7 @@ https://www.youtube.com/watch?v=SODU941HsFQ&t=244s
 3. Put the .exe in **[your server folder]**\resources\datapack\required\ct\data\ct\function
 
 
-That 's all!
+That's all!
 
 
 ## How to use
