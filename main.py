@@ -75,7 +75,7 @@ def reset_to_original():
 
 def update_char_list():
     app.check_if_db_exists()
-    with open("CustomSaved.json", "r") as f:
+    with open("customSaved.json", "r") as f:
         db_list = json.load(f)
 
     text_list.delete(0, tk.END)
@@ -86,7 +86,7 @@ def show_character():
     selected_index = text_list.curselection()
     if selected_index:
         char_name = text_list.get(selected_index)
-        with open("CustomSaved.json", "r", encoding="utf-8") as f:
+        with open("customSaved.json", "r", encoding="utf-8") as f:
             db_list = json.load(f)
         
         target_char = next((item for item in db_list if item.get("name") == char_name), None)

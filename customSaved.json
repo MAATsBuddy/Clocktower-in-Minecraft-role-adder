@@ -59,7 +59,7 @@
     "ability": "2nd night, learn 3 players that have a phrase in common. Each night*, guess what it is & learn how close you are.",
     "firstNight": null,
     "firstNightReminder": null,
-    "otherNight": 16,
+    "otherNight": 69,
     "otherNightReminder": "If it's the second night. Show the 3 players. Let them guess",
     "reminders": [
       "Connected",
@@ -72,13 +72,14 @@
     "id": "blabbermouth",
     "name": "Blabbermouth",
     "team": "townsfolk",
-    "ability": "1st night, choose a player. Once per game, at night*: Make it so you and the evil team learn that player & character.",
+    "ability": "You start knowing a player. Once per game, at night*: make you and an evil player learn the player & character.",
     "firstNight": 55,
-    "firstNightReminder": "Choose a player",
+    "firstNightReminder": "Learn a player",
     "otherNight": 65,
     "otherNightReminder": "If the blabbermouth wants to use their ability, they learn the *Will Reveal* player. Then, the evil team learns the *will reveal* player.",
     "reminders": [
-      "Will Reveal"
+      "Will Reveal",
+      "No ability"
     ],
     "jinxes": [
       {
@@ -86,7 +87,7 @@
         "reason": "marionette doesn't wake up for the Blabbermouth's ability"
       },
       {
-        "id": "TEST_Man",
+        "id": "testman",
         "reason": "bros testing fr fr"
       }
     ]
@@ -147,7 +148,7 @@
     "id": "recordskepper",
     "name": "Records Kepper",
     "team": "outsiders",
-    "ability": "When you die, the Demon may choose up to 3 players to learn their character & reminders.",
+    "ability": "When you die, the Demon may choose up to 4 players to learn their character & reminders.",
     "firstNight": null,
     "firstNightReminder": null,
     "otherNight": null,
@@ -198,18 +199,6 @@
         "reason": "The cerenovus may choose to make a player mad that they are the Soul eater."
       }
     ]
-  },
-  {
-    "id": "exiled",
-    "name": "Exiled",
-    "team": "minions",
-    "ability": "The first time either you or an Outsider dies, choose a player: they become a not in play outsider [-1 Outsider]",
-    "firstNight": null,
-    "firstNightReminder": null,
-    "otherNight": 33,
-    "otherNightReminder": "The first time either you or an Outsider dies: choose an player",
-    "reminders": [],
-    "jinxes": []
   },
   {
     "id": "trolley",
@@ -280,6 +269,52 @@
     "otherNight": null,
     "otherNightReminder": null,
     "reminders": [],
+    "jinxes": []
+  },
+  {
+    "id": "banker",
+    "name": "Banker",
+    "team": "townsfolk",
+    "ability": "Once per game, at night, learn X in-play characters, where X is the current night.",
+    "firstNight": null,
+    "firstNightReminder": null,
+    "otherNight": 82,
+    "otherNightReminder": "ask if they want to use their ability",
+    "reminders": [
+      "No ability"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "banished",
+    "name": "Banished",
+    "team": "minions",
+    "ability": "You start knowing all not in play Outsiders, & choose one to gain the ability of [+1 or -1 outsiders]",
+    "firstNight": 38,
+    "firstNightReminder": "Learn the not in play outsiders and choose one",
+    "otherNight": null,
+    "otherNightReminder": null,
+    "reminders": [
+      "Is the banished"
+    ],
+    "jinxes": []
+  },
+  {
+    "id": "technician",
+    "name": "Repairman",
+    "team": "outsiders",
+    "ability": "Each night: choose a player. An alive townsfolk you never choose is drunk until dusk. Even if you die",
+    "firstNight": null,
+    "firstNightReminder": null,
+    "otherNight": 44,
+    "otherNightReminder": "Choose a player.",
+    "reminders": [
+      "Tested",
+      "Tested",
+      "Tested",
+      "Tested",
+      "Drunk"
+    ],
     "jinxes": []
   }
 ]

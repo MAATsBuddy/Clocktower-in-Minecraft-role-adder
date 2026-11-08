@@ -1,8 +1,16 @@
 import json
 import os
 import shutil
+import sys
 import unicodedata
 import __main__ as main
+
+if getattr(sys, "frozen", False):
+    # in .exe
+    ROOT_DIR = os.path.dirname(sys.executable)
+else:
+    # in .py
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DB_FILE = "customSaved.json"
 
@@ -138,10 +146,10 @@ def bulk_process_characters(db_list):
         if item.get("team") == "npcs":
             continue  # Skip npcs
         modify_reset_in_roles(item["id"])
-    print(f"Successfully put characters in {os.path.join('util', 'reset_in_roles.mcfunction')}")
+    print(f"Successfully put characters in {os.path.join(ROOT_DIR, 'util', 'reset_in_roles.mcfunction')}")
 
     # Handle script/set_imported.mcfunction (The order is extremely important, this is why it creates another dict, so we can sort it by night order)
-    imported_file = os.path.join("script", "set_imported.mcfunction")
+    imported_file = os.path.join(ROOT_DIR, "script", "set_imported.mcfunction")
 
     order_list = []
     for char in db_list:
@@ -173,9 +181,9 @@ def bulk_process_characters(db_list):
     _insert_block_at(imported_file, 206, imported_lines)
 
     # separate vanilla characters from custom characters with a 600-inf CUSTOM (Obviusly this doesn't go to infinite)
-    menu_file = os.path.join("admin", "setup", "set_from_menu.mcfunction")
-    grim_file = os.path.join("start_game", "roles", "set_grim_roles.mcfunction")
-    announce_file = os.path.join("start_game", "roles", "announce.mcfunction")
+    menu_file = os.path.join(ROOT_DIR,"admin", "setup", "set_from_menu.mcfunction")
+    grim_file = os.path.join(ROOT_DIR, "start_game", "roles", "set_grim_roles.mcfunction")
+    announce_file = os.path.join(ROOT_DIR, "start_game", "roles", "announce.mcfunction")
 
     # Prepare lines for each file, don't try to replace them with one single variable, you did this two times already
     menu_lines = ["\n## 600-inf CUSTOM\n"]
@@ -208,7 +216,7 @@ def bulk_process_characters(db_list):
     _append_lines_to_file(announce_file, announce_lines)
 
     # 4. Handle data/character_data.mcfunction (Kinda scuffed, just injects the data right after "characters": {\)
-    character_data_file = os.path.join("data", "character_data.mcfunction")
+    character_data_file = os.path.join(ROOT_DIR,"data", "character_data.mcfunction")
     _inject_into_nbt_file_start(character_data_file, db_list)
 
     # 5. Does the resourcepack for the clients
@@ -217,19 +225,18 @@ def bulk_process_characters(db_list):
 def _backup_path_for(file_path):
     normalized_path = os.path.normpath(file_path)
     if os.path.isabs(normalized_path):
-        normalized_path = os.path.relpath(normalized_path, os.getcwd())
-    return os.path.join("original_files", normalized_path)
+        normalized_path = os.path.relpath(normalized_path, ROOT_DIR)
+    return os.path.join(ROOT_DIR, "original_files", normalized_path)
 
 
 def reset_to_original():
-    # Restores files from the dedicated backup folder and deletes resourcepack for clients
     files_to_restore = [
-        os.path.join("util", "reset_in_roles.mcfunction"),
-        os.path.join("script", "set_imported.mcfunction"),
-        os.path.join("admin", "setup", "set_from_menu.mcfunction"),
-        os.path.join("start_game", "roles", "set_grim_roles.mcfunction"),
-        os.path.join("start_game", "roles", "announce.mcfunction"),
-        os.path.join("data", "character_data.mcfunction")
+        os.path.join(ROOT_DIR, "util", "reset_in_roles.mcfunction"),
+        os.path.join(ROOT_DIR, "script", "set_imported.mcfunction"),
+        os.path.join(ROOT_DIR, "admin", "setup", "set_from_menu.mcfunction"),
+        os.path.join(ROOT_DIR, "start_game", "roles", "set_grim_roles.mcfunction"),
+        os.path.join(ROOT_DIR, "start_game", "roles", "announce.mcfunction"),
+        os.path.join(ROOT_DIR, "data", "character_data.mcfunction")
     ]
 
     for file_path in files_to_restore:
@@ -239,7 +246,7 @@ def reset_to_original():
             shutil.copy2(backup_path, file_path)
             print(f"Restored: {file_path} from {backup_path}")
     
-    asset_dir = "Blood on the Moddedtower"
+    asset_dir = os.path.join(ROOT_DIR, "Blood on the Moddedtower")
     if os.path.exists(asset_dir):
         shutil.rmtree(asset_dir)
         print(f"Removed asset directory: {asset_dir}")
@@ -255,11 +262,11 @@ def _ensure_backup(file_path):
 
 def modify_reset_in_roles(char_id):
     # Appends the scoreboard command to util/reset_in_roles.mcfunction
-    file_path = os.path.join("util", "reset_in_roles.mcfunction")
+    file_path = os.path.join(ROOT_DIR, "util", "reset_in_roles.mcfunction")
     _ensure_backup(file_path)
     new_line = f"\nscoreboard players set {char_id} role_list 0"
     try:
-        os.makedirs("util", exist_ok=True)
+        os.makedirs(os.path.join(ROOT_DIR, "util"), exist_ok=True)
         with open(file_path, "a", encoding="utf-8") as file:
             file.write(new_line)
     except Exception as e:
@@ -382,7 +389,7 @@ def _inject_into_nbt_file_start(file_path, db_list):
 
 def _generate_client_assets(db_list):
     # Generates the client side resourcepack
-    base_dir = "Blood on the Moddedtower"
+    base_dir = os.path.join(ROOT_DIR, "Blood on the Moddedtower")
     lang_dir = os.path.join(base_dir, "assets", "minecraft", "lang")
     roles_dir = os.path.join(base_dir, "assets", "ct", "textures", "role", "faded") # Doesn't add the images ):
     try:
